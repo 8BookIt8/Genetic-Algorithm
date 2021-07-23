@@ -1,8 +1,11 @@
+from random import randrange
 import pygame
 import BIbear
 import BIfood
 import math
 import keyboard
+
+pygame.init()
 
 class BIGame(): 
     def __init__(self): 
@@ -19,11 +22,22 @@ class BIGame():
 
         self.count_bear = 60
         self.count_food = 80
+        
+        self.now_bear = self.count_bear
 
-        self.spawn_distance = 430
+        self.spawn_distance = 450
 
-        self.list_bear = []
-        self.list_food = []
+        self.font = pygame.font.Font("fonts/font.ttf", 30)
+        self.pos_font = (10, 860)
+
+        self.generation = 1
+        self.next_bear = 40
+
+        self.list_bear = pygame.sprite.Group()
+        self.list_food = pygame.sprite.Group()
+
+        self.cause_speed = True
+        self.cause_size = True
 
         self.is_paused = True
         self.is_running = True
@@ -44,13 +58,26 @@ class BIGame():
 
             self.drawBackGround()
 
-            for bears in self.list_bear: 
-                bears.draw()
-                if self.is_paused == False: 
-                    bears.move()
+            generation_text = self.font.render("Gene : {}".format(self.generation), True, (255, 255, 255))
+            self.screen.blit(generation_text, self.pos_font)
+            
+            if self.is_paused == False:
+                for bear in self.list_bear: 
+                    bear.move()
 
-            for foods in self.list_food: 
-                foods.draw()
+                    list_collide = pygame.sprite.spritecollide(bear, self.list_food, True, pygame.sprite.collide_mask)
+                    for food in list_collide: 
+                        bear.energy = 100
+
+                    if bear.energy <= 0 and self.now_bear > self.next_bear: 
+                        self.list_bear.remove(bear)
+                        self.now_bear -= 1
+
+            if self.now_bear == self.next_bear: 
+                self.is_paused = True
+
+            self.list_food.draw(self.screen)
+            self.list_bear.draw(self.screen)
 
             pygame.display.update()
 
@@ -59,15 +86,18 @@ class BIGame():
         pygame.draw.circle(self.screen, self.stage_color, (451, 451), 450, 2)
 
     def init(self): 
+        size = 30
         for i in range(1, (self.count_bear + 1)): 
-            x = math.sin(((2 * math.pi) / self.count_bear) * i) * self.spawn_distance
-            y = math.cos(((2 * math.pi) / self.count_bear) * i) * self.spawn_distance
-            new_bear = BIbear.BIBear(self.screen, x, y, 15)
-            self.list_bear.append(new_bear)
+            if self.cause_size: 
+                size = randrange(20, 40)
+            x = math.sin(((2 * math.pi) / self.count_bear) * i) * (self.spawn_distance - (size * 0.85))
+            y = math.cos(((2 * math.pi) / self.count_bear) * i) * (self.spawn_distance - (size * 0.85))
+            new_bear = BIbear.BIBear(self.screen, x, y, size)
+            self.list_bear.add(new_bear)
 
         for i in range(1, (self.count_food + 1)): 
             new_food = BIfood.BIFood(self.screen)
-            self.list_food.append(new_food)
+            self.list_food.add(new_food)
 
 new_game = BIGame()
 new_game.init()

@@ -5,11 +5,16 @@ import pygame
 center = (451, 451)
 spawn_distance = 350
 
-class BIFood(): 
+class BIFood(pygame.sprite.Sprite): 
     def __init__(self, screen):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("images/food.png").convert_alpha()
         self.screen = screen
         self.x = center[0]
         self.y = center[1]
+        self.rect = self.image.get_rect()
+        self.rect.left = 0
+        self.rect.top = 0
         self.size = 5
         self.init()
 
@@ -18,6 +23,10 @@ class BIFood():
         dist = math.sqrt(dist)
         return dist
 
+    def setRect(self): 
+        self.rect.left = self.x - 5
+        self.rect.top = self.y - 5
+
     def init(self): 
         while True: 
             x = randrange(spawn_distance * -1, spawn_distance + 1)
@@ -25,7 +34,5 @@ class BIFood():
             if (self.distanceFromCenter((self.x + x, self.y + y)) <= spawn_distance): 
                 self.x += x
                 self.y += y
+                self.setRect()
                 break
-
-    def draw(self): 
-        pygame.draw.circle(self.screen, (0, 255, 0), (self.x, self.y), self.size, 0)
