@@ -6,13 +6,13 @@ center = (451, 451)
 spawn_distance = 430
 
 class BIBear(pygame.sprite.Sprite): 
-    def __init__(self, screen, x, y, size):
+    def __init__(self, screen, x, y, speed, size):
         pygame.sprite.Sprite.__init__(self)
         self.screen = screen
         self.size = size
         self.x = center[0] + x
         self.y = center[1] + y
-        self.speed = 8
+        self.speed = speed
         self.energy = 100
         self.image = pygame.image.load("images/bear.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (size, size))

@@ -1,9 +1,10 @@
-from random import randrange
+from random import uniform, randrange
 import pygame
 import BIbear
 import BIfood
 import math
 import keyboard
+import matplotlib.pyplot as plt
 
 pygame.init()
 
@@ -36,18 +37,28 @@ class BIGame():
         self.list_bear = pygame.sprite.Group()
         self.list_food = pygame.sprite.Group()
 
-        self.cause_speed = True
-        self.cause_size = True
+        # self.cause_speed = True
+        # self.cause_size = True
+
+        self.figure = plt.figure(figsize=(9.375, 9.375))
+        plt.xlabel("Speed")
+        plt.ylabel("Size")
+        plt.show(block=False)
+
+        self.list_x = []
+        self.list_y = []
+
+        self.graph = None
 
         self.is_paused = True
-        self.is_running = True
 
     def startGame(self): 
         clock = pygame.time.Clock()
-        while self.is_running: 
+        while True: 
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT: 
-                    self.is_running = False
+                    pygame.quit()
+                    exit()
 
             clock.tick(10000)
 
@@ -75,29 +86,50 @@ class BIGame():
 
             if self.now_bear == self.next_bear: 
                 self.is_paused = True
+                self.list_x.clear()
+                self.list_y.clear()
+                for bear in self.list_bear: 
+                    self.list_x.append(bear.speed)
+                    self.list_y.append(bear.size)
+                self.drawGraph()
 
             self.list_food.draw(self.screen)
             self.list_bear.draw(self.screen)
 
             pygame.display.update()
 
+    def drawGraph(self): 
+        # for x, y in self.list_x, self.list_y: 
+        #     plt.scatter(x, y)
+        if self.graph != None: 
+            self.graph.set_visible(False)
+        self.graph = plt.scatter(self.list_x, self.list_y)
+        self.figure.canvas.draw()
+        self.figure.canvas.flush_events()
+
     def drawBackGround(self): 
         self.screen.fill(self.background_color)
         pygame.draw.circle(self.screen, self.stage_color, (451, 451), 450, 2)
 
-    def init(self): 
-        size = 30
-        for i in range(1, (self.count_bear + 1)): 
-            if self.cause_size: 
-                size = randrange(20, 40)
-            x = math.sin(((2 * math.pi) / self.count_bear) * i) * (self.spawn_distance - (size * 0.85))
-            y = math.cos(((2 * math.pi) / self.count_bear) * i) * (self.spawn_distance - (size * 0.85))
-            new_bear = BIbear.BIBear(self.screen, x, y, size)
-            self.list_bear.add(new_bear)
-
+    def addFoods(self): 
         for i in range(1, (self.count_food + 1)): 
             new_food = BIfood.BIFood(self.screen)
             self.list_food.add(new_food)
+
+    def init(self): 
+        for i in range(1, (self.count_bear + 1)): 
+            speed = uniform(2, 4)
+            size = randrange(20, 40)
+            x = math.sin(((2 * math.pi) / self.count_bear) * i) * (self.spawn_distance - (size * 0.85))
+            y = math.cos(((2 * math.pi) / self.count_bear) * i) * (self.spawn_distance - (size * 0.85))
+            new_bear = BIbear.BIBear(self.screen, x, y, speed, size)
+            self.list_bear.add(new_bear)
+            self.list_x.append(new_bear.speed)
+            self.list_y.append(new_bear.size)
+
+        self.addFoods()
+        
+        self.drawGraph()
 
 new_game = BIGame()
 new_game.init()
