@@ -1,38 +1,39 @@
-from random import uniform, randrange
-import pygame
 import BIbear
 import BIfood
+import BIgeneration
+
+import pygame
+import matplotlib.pyplot as plt
+import yaml
+
+from random import uniform, randrange
 import math
 import keyboard
-import matplotlib.pyplot as plt
-
-pygame.init()
 
 class BIGame(): 
     def __init__(self): 
         self.screen_width = 901
         self.screen_height = 901
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
-        pygame.display.set_caption("Genetic Algorithm")
+        pygame.display.set_caption('Genetic Algorithm')
 
         self.background_color = (30, 30, 30)
         self.stage_color = (255, 255, 255)
-        self.entity_color = (191, 1, 15)
 
         self.center = (451, 451)
 
-        self.count_bear = 60
-        self.count_food = 80
+        self.count_bear = settings['basic_settings']['count_bear']
+        self.count_food = settings['basic_settings']['count_food']
         
         self.now_bear = self.count_bear
 
-        self.spawn_distance = 450
+        self.spawn_distance = settings['basic_settings']['distance_bear']
 
-        self.font = pygame.font.Font("fonts/font.ttf", 30)
+        self.font = pygame.font.Font('fonts/font.ttf', 30)
         self.pos_font = (10, 860)
 
         self.generation = 1
-        self.next_bear = 40
+        self.next_bear = settings['generation_settings']['next_bear']
 
         self.list_bear = pygame.sprite.Group()
         self.list_food = pygame.sprite.Group()
@@ -41,8 +42,8 @@ class BIGame():
         # self.cause_size = True
 
         self.figure = plt.figure(figsize=(9.375, 9.375))
-        plt.xlabel("Speed")
-        plt.ylabel("Size")
+        plt.xlabel('Speed')
+        plt.ylabel('Size')
         plt.show(block=False)
 
         self.list_x = []
@@ -69,7 +70,7 @@ class BIGame():
 
             self.drawBackGround()
 
-            generation_text = self.font.render("Gene : {}".format(self.generation), True, (255, 255, 255))
+            generation_text = self.font.render('Gene : {}'.format(self.generation), True, (255, 255, 255))
             self.screen.blit(generation_text, self.pos_font)
             
             if self.is_paused == False:
@@ -88,6 +89,7 @@ class BIGame():
                 self.is_paused = True
                 self.list_x.clear()
                 self.list_y.clear()
+                BIgeneration.nextGeneration(self.list_bear)
                 for bear in self.list_bear: 
                     self.list_x.append(bear.speed)
                     self.list_y.append(bear.size)
@@ -99,8 +101,6 @@ class BIGame():
             pygame.display.update()
 
     def drawGraph(self): 
-        # for x, y in self.list_x, self.list_y: 
-        #     plt.scatter(x, y)
         if self.graph != None: 
             self.graph.set_visible(False)
         self.graph = plt.scatter(self.list_x, self.list_y)
@@ -130,6 +130,11 @@ class BIGame():
         self.addFoods()
         
         self.drawGraph()
+
+with open('settings.yaml') as file: 
+    settings = yaml.load(file, yaml.FullLoader)
+
+pygame.init()
 
 new_game = BIGame()
 new_game.init()

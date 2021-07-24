@@ -1,9 +1,14 @@
+import pygame
+import yaml
+
 import math
 from random import randrange
-import pygame
+
+with open('settings.yaml') as file: 
+    settings = yaml.load(file, yaml.FullLoader)
 
 center = (451, 451)
-spawn_distance = 350
+spawn_distance = settings['basic_settings']['max_distance_food']
 
 class BIFood(pygame.sprite.Sprite): 
     def __init__(self, screen):

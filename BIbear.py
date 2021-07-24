@@ -1,9 +1,14 @@
+import pygame
+import yaml
+
 import math
 from random import randrange
-import pygame
+
+with open('settings.yaml') as file: 
+    settings = yaml.load(file, yaml.FullLoader)
 
 center = (451, 451)
-spawn_distance = 430
+spawn_distance = settings['basic_settings']['distance_bear']
 
 class BIBear(pygame.sprite.Sprite): 
     def __init__(self, screen, x, y, speed, size):
@@ -13,6 +18,7 @@ class BIBear(pygame.sprite.Sprite):
         self.x = center[0] + x
         self.y = center[1] + y
         self.speed = speed
+        self.spawn_distance = spawn_distance - (self.size * 0.85)
         self.energy = 100
         self.image = pygame.image.load("images/bear.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (size, size))
@@ -32,7 +38,7 @@ class BIBear(pygame.sprite.Sprite):
         x = randrange(-1, 2) * self.speed
         y = randrange(-1, 2) * self.speed
         self.energy -= (0.5 * (self.speed ** 2) * (self.size)) / 4500
-        if (self.distanceFromCenter((self.x + x, self.y + y)) <= spawn_distance): 
+        if (self.distanceFromCenter((self.x + x, self.y + y)) <= self.spawn_distance): 
             self.x += x
             self.y += y
             self.setRect()
