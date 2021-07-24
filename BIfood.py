@@ -11,10 +11,9 @@ center = (451, 451)
 spawn_distance = settings['basic_settings']['max_distance_food']
 
 class BIFood(pygame.sprite.Sprite): 
-    def __init__(self, screen):
+    def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("images/food.png").convert_alpha()
-        self.screen = screen
         self.x = center[0]
         self.y = center[1]
         self.rect = self.image.get_rect()

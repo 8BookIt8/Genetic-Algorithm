@@ -1,9 +1,10 @@
 basic_settings: 
-  count_bear: 60
+  count_bear: 40
   count_food: 80
+  food_saturation: 30
   distance_bear: 450
-  max_distance_food: 350
+  max_distance_food: 400
 
 generation_settings: 
-  next_bear: 40
-  chance_mutant: 5
+  next_bear: 20
+  chance_mutant: 10
