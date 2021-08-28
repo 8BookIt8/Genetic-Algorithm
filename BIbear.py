@@ -12,6 +12,7 @@ center = (451, 451)
 spawn_distance = settings['basic_settings']['distance_bear']
 
 class BIBear(pygame.sprite.Sprite): 
+    # 기본 설정
     def __init__(self, x, y, speed, size):
         pygame.sprite.Sprite.__init__(self)
         self.size = size
@@ -28,15 +29,31 @@ class BIBear(pygame.sprite.Sprite):
         self.setRect()
 
     def distanceFrom(self, bear, pos): 
+        '''
+        pos로부터의 거리 계산
+
+        Args: 
+            bear (BIbear): 곰
+            pos (tuple): 대상 좌표
+
+        Returns: 
+            dist (float): pos로부터의 거리
+        '''
         dist = ((pos[0] - bear[0]) ** 2) + ((pos[1] - bear[1]) ** 2)
         dist = math.sqrt(dist)
         return dist
 
     def setRect(self): 
+        '''
+        rect 설정
+        '''
         self.rect.left = self.x - 15
         self.rect.top = self.y - 15
 
     def changeTarget(self): 
+        '''
+        목적지 설정
+        '''
         pos = (1000, 1000)
         while self.distanceFrom(pos, center) >= self.spawn_distance: 
             x = uniform(10, 891)
@@ -46,6 +63,9 @@ class BIBear(pygame.sprite.Sprite):
         self.target_y = pos[1]
 
     def move(self): 
+        '''
+        목적지로 이동
+        '''
         x = self.speed if self.target_x - self.x > 0 else -self.speed
         y = self.speed if self.target_y - self.y > 0 else -self.speed
         self.energy -= (0.5 * (self.speed ** 2) * (self.size)) / 300

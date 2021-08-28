@@ -16,6 +16,7 @@ import keyboard
 import time
 
 class BIGame(): 
+    # 기본 설정
     def __init__(self): 
         self.screen_width = 901
         self.screen_height = 901
@@ -74,6 +75,9 @@ class BIGame():
         self.is_paused = True
 
     def startGame(self): 
+        '''
+        시뮬레이션 시작
+        '''
         clock = pygame.time.Clock()
         while True: 
             for event in pygame.event.get(): 
@@ -133,6 +137,9 @@ class BIGame():
             pygame.display.update()
 
     def drawGraph(self): 
+        '''
+        그래프 업데이트
+        '''
         if self.graph != None: 
             self.graph.set_visible(False)
         self.graph = self.plot.scatter(self.list_x, self.list_y, s = 20, c = (1, 1, 1))
@@ -140,16 +147,27 @@ class BIGame():
         self.figure.canvas.flush_events()
 
     def drawBackGround(self): 
+        '''
+        백그라운드 컬러 및 필드 추가
+        '''
         self.screen.fill(self.background_color)
         pygame.draw.circle(self.screen, self.stage_color, (451, 451), 450, 2)
 
+    
     def addFoods(self): 
+        '''
+        필드에 음식 추가
+        '''
         self.list_food = pygame.sprite.Group()
         for i in range(1, (self.count_food + 1)): 
             new_food = BIfood.BIFood()
             self.list_food.add(new_food)
 
+    
     def init(self): 
+        '''
+        필드에 곰 추가 및 기본 설정
+        '''
         for i in range(1, (self.count_bear + 1)): 
             speed = uniform(2, 4)
             size = randrange(20, 61)
